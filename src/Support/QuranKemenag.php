@@ -76,9 +76,17 @@ class QuranKemenag implements QuranInterface
                 'kitabah' => $item['kitabah'],
                 'latin' => $item['latin'],
                 'translation' => $item['translation'],
+                'audio_url' => $this->getAudioUrl($surahId, $item['ayah']),
             ];
         }
 
         return $verses;
+    }
+
+    public function getAudioUrl(int $surahId, int $ayah): string
+    {
+        $file = sprintf('%03d%03d', $surahId, $ayah);
+
+        return config('quran.audio_base_uri').$file.'.m4a';
     }
 }

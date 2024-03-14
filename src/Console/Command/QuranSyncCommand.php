@@ -44,7 +44,7 @@ class QuranSyncCommand extends Command
 
     protected function getPreferences(): array
     {
-        $listSurah = Quran::query()->pluck('transliteration', 'external_id');
+        $listSurah = Quran::query()->pluck('external_id', 'external_id');
         if ($listSurah->isNotEmpty()) {
             $surahTransliteration = suggest(
                 label: 'want to select Surah ?',

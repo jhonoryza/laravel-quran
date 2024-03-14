@@ -1,4 +1,4 @@
-# Laravel Prayertime
+# Laravel Quran
 
 ## install
 

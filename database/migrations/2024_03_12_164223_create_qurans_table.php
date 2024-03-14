@@ -33,6 +33,7 @@ return new class extends Migration
             $table->text('kitabah');
             $table->text('latin');
             $table->text('translation');
+            $table->string('audio_url');
 
             $table->unique(['quran_id', 'ayah']);
 

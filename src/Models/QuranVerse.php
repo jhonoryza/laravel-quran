@@ -15,6 +15,7 @@ class QuranVerse extends Model
         'kitabah',
         'latin',
         'translation',
+        'audio_url',
     ];
 
     protected $casts = [
