@@ -1,5 +1,17 @@
 # Laravel Quran
 
+<p align="center">
+    <a href="https://packagist.org/packages/jhonoryza/laravel-quran">
+        <img src="https://poser.pugx.org/jhonoryza/laravel-quran/d/total.svg" alt="Total Downloads">
+    </a>
+    <a href="https://packagist.org/packages/jhonoryza/laravel-quran">
+        <img src="https://poser.pugx.org/jhonoryza/laravel-quran/v/stable.svg" alt="Latest Stable Version">
+    </a>
+    <a href="https://packagist.org/packages/jhonoryza/laravel-quran">
+        <img src="https://poser.pugx.org/jhonoryza/laravel-quran/license.svg" alt="License">
+    </a>
+</p>
+
 ## install
 
 ```bash
