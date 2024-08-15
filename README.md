@@ -18,7 +18,7 @@
 composer require jhonoryza/laravel-quran
 ```
 
-run migration
+## run migration
 
 ```bash
 php artisan migrate
@@ -26,19 +26,23 @@ php artisan migrate
 
 this will create 2 tables: qurans and quran_verses
 
-publish config file
+## publish config file
 
 ```bash
 php artisan vendor:publish --tag=quran-config
 ```
 
-kemenag source is using rest api method to get the data
+Source of quran.
 
-tanzil.net source is using dump sql data that provided by tanzil to get the data
+options: 'kemenag', 'kemenag_official', 'tanzil.net'
+
+  - kemenag is using rest api method to get the data from non official source
+  - kemenag_official is using rest api method to get the data from official source
+  - tanzil.net is using dump sql data that provided by tanzil to get the data
 
 ## sync data
 
-sync quran
+sync quran data
 
 ```bash
 php artisan quran:sync
