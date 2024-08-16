@@ -3,8 +3,6 @@
 namespace Jhonoryza\LaravelQuran\Console\Command;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Jhonoryza\LaravelQuran\Models\Quran;
@@ -12,7 +10,7 @@ use Jhonoryza\LaravelQuran\Models\QuranVerse;
 use Jhonoryza\LaravelQuran\Support\Concerns\QuranInterface;
 
 use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\suggest;
+use function Laravel\Prompts\multisearch;
 
 class QuranSyncCommand extends Command
 {
@@ -41,11 +39,8 @@ class QuranSyncCommand extends Command
 
         $this->info('Syncing quran data...');
 
-        [
-            'external_id' => $externalId
-        ] = $this->getPreferences();
         $this->syncSurah($quran);
-        $this->syncAyah($quran, $externalId);
+        $this->syncAyah($quran);
 
         $this->info('Quran data synced');
     }
@@ -64,21 +59,25 @@ class QuranSyncCommand extends Command
 
     protected function getPreferences(): array
     {
-        $listSurah = Quran::query()->pluck('external_id', 'external_id');
-        if ($listSurah->isNotEmpty()) {
-            $externalId = suggest(
-                label: 'want to select Surah ?',
-                options: $listSurah,
-            );
-        }
+        $externalIds = multisearch(
+            label: 'want to select multiple surah ?',
+            options: fn (string $value) => Quran::query()
+                ->where('external_id', $value)
+                ->pluck('external_id', 'external_id')->toArray(),
+            hint: '114',
+            placeholder: 'empty for select all'
+        );
 
         return [
-            'external_id' => $externalId ?? '',
+            'external_ids' => ! empty($externalIds) ? $externalIds : [],
         ];
     }
 
     protected function syncSurah(QuranInterface $quran): void
     {
+        if (! confirm('want to sync surah to qurans table ?', false)) {
+            return;
+        }
         $this->info('Syncing quran surah...');
         try {
             $qurans = $quran->getListSurah();
@@ -105,18 +104,22 @@ class QuranSyncCommand extends Command
         $this->info('Quran surah synced');
     }
 
-    protected function syncAyah(QuranInterface $quran, string $externalId): void
+    protected function syncAyah(QuranInterface $quran): void
     {
+        [
+            'external_ids' => $externalIds
+        ] = $this->getPreferences();
+
         $this->info('Syncing quran ayah...');
 
         $surahList = Quran::query()
             ->when(
-                ! empty($externalId),
-                fn ($query) => $query->where('external_id', $externalId)
+                ! empty($externalIds),
+                fn ($query) => $query->whereIn('external_id', $externalIds)
             )
             ->get();
 
-        $allAyah = $this->getAllAyahFromCache();
+        $allAyah = collect();
         $fails   = collect();
 
         // get all ayah from api
@@ -150,9 +153,6 @@ class QuranSyncCommand extends Command
 
         // save all ayah to database
         if ($allAyah->isNotEmpty()) {
-
-            $this->setAllAyahToCache($allAyah);
-
             $allAyah->chunk(10)->each(function ($items) {
                 DB::transaction(function () use ($items) {
                     QuranVerse::query()->upsert(
@@ -163,21 +163,5 @@ class QuranSyncCommand extends Command
                 });
             });
         }
-    }
-
-    protected function setAllAyahToCache(Collection $allAyah): void
-    {
-        Cache::put('all_ayah', $allAyah);
-    }
-
-    protected function getAllAyahFromCache(): Collection
-    {
-        $allAyah = Cache::get('all_ayah', collect());
-
-        if ($allAyah->isNotEmpty() && ! confirm('found all ayah from cache, want to use this ?')) {
-            $allAyah = collect();
-        }
-
-        return $allAyah;
     }
 }
