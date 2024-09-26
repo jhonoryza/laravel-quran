@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Jhonoryza\LaravelQuran\Console\Command\QuranSyncCommand;
 use Jhonoryza\LaravelQuran\Support\Concerns\QuranInterface;
 use Jhonoryza\LaravelQuran\Support\QuranKemenag;
+use Jhonoryza\LaravelQuran\Support\EQuranId;
 use Jhonoryza\LaravelQuran\Support\QuranKemenagOfficial;
 
 class QuranServiceProvider extends ServiceProvider
@@ -26,6 +27,8 @@ class QuranServiceProvider extends ServiceProvider
                 $this->app->bind(QuranInterface::class, QuranKemenag::class);
             } elseif (config('quran.source') == 'kemenag_official') {
                 $this->app->bind(QuranInterface::class, QuranKemenagOfficial::class);
+            } elseif (config('quran.source') == 'equran.id') {
+                $this->app->bind(QuranInterface::class, EQuranId::class);
             } else {
                 throw new \Exception('Tanzil not implemented yet');
             }
