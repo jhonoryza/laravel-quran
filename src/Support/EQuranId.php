@@ -43,7 +43,7 @@ class EQuranId implements QuranInterface
         $json = Http::baseUrl(config('quran.base_uri'))
             ->connectTimeout(config('quran.timeout'))
             ->timeout(config('quran.timeout'))
-            ->get('api/surat/' . 1)
+            ->get('api/surat/' . $surahId)
             ->throw()
             ->json();
             
