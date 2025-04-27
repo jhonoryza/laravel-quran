@@ -61,8 +61,7 @@ class QuranSyncCommand extends Command
     {
         $externalIds = multisearch(
             label: 'want to select multiple surah ?',
-            options: fn (string $value) => Quran::query()
-                ->where('external_id', $value)
+            options: fn () => Quran::query()
                 ->pluck('external_id', 'external_id')->toArray(),
             hint: '114',
             placeholder: 'empty for select all'
