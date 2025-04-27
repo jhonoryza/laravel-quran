@@ -15,7 +15,7 @@ class QuranKemenag implements QuranInterface
     public function getListSurah(): array
     {
         $json = Http::baseUrl(config('quran.base_uri'))
-            ->withHeader("Origin", "https://quran.kemenag.go.id")
+            ->replaceHeaders(["Origin" => "https://quran.kemenag.go.id"])
             ->connectTimeout(config('quran.timeout'))
             ->timeout(config('quran.timeout'))
             ->get('quran-surah')
@@ -51,7 +51,7 @@ class QuranKemenag implements QuranInterface
     public function getListVerses(int $surahId): array
     {
         $json = Http::baseUrl(config('quran.base_uri'))
-            ->withHeader("Origin", "https://quran.kemenag.go.id")
+            ->replaceHeaders(["Origin" => "https://quran.kemenag.go.id"])
             ->connectTimeout(config('quran.timeout'))
             ->timeout(config('quran.timeout'))
             ->get('quran-ayah', [
